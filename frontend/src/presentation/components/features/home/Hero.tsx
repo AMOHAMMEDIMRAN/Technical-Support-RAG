@@ -13,10 +13,11 @@ import {
 
 
 
+
 const Hero = () => {
   return (
-    <main>
-        <section className="relative overflow-hidden">
+    <main className="h-[calc(100vh-4rem)]">
+        <section className="relative overflow-hidden h-full">
           <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-cyan-50 to-purple-50 dark:from-blue-950/20 dark:via-cyan-950/20 dark:to-purple-950/20" />
 
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-linear-to-r from-blue-400 to-cyan-400 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl opacity-20 animate-pulse" />
@@ -25,74 +26,74 @@ const Hero = () => {
             style={{ animationDelay: "1s" }}
           />
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-0">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8">
-                <div className="space-y-6">
+          <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center h-full py-8 lg:py-0">
+              <div className="space-y-6 sm:space-y-8">
+                <div className="space-y-4 sm:space-y-6">
                   <Badge className="bg-linear-to-r from-blue-600 to-cyan-600 text-white border-0 px-4 py-1.5 shadow-lg shadow-blue-500/30 animate-pulse">
                     <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                     AI-Powered Support
                   </Badge>
 
                   <div>
-                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
                       <span className="bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent drop-shadow-sm">
                         Kelo is here
                       </span>
                       <br />
-                      <span className="text-primary">to help you</span>
+                      <span className="text-primary drop-shadow-lg">to help you</span>
                     </h1>
                   </div>
 
-                  <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
+                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
                     Experience instant, accurate technical support powered by
                     advanced RAG technology. Get 24/7 assistance for all your
                     technical questions.
                   </p>
 
-                  <div className="flex flex-wrap gap-3">
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 backdrop-blur-sm border border-yellow-200 dark:border-yellow-800 hover:scale-105 transition-transform shadow-sm">
-                      <Zap className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-                      <span className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
+                    <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-linear-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 backdrop-blur-sm border border-yellow-200 dark:border-yellow-800 hover:scale-105 transition-transform shadow-sm">
+                      <Zap className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-yellow-600 dark:text-yellow-400" />
+                      <span className="text-xs sm:text-sm font-medium text-yellow-900 dark:text-yellow-100">
                         Lightning Fast
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 backdrop-blur-sm border border-green-200 dark:border-green-800 hover:scale-105 transition-transform shadow-sm">
-                      <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
-                      <span className="text-sm font-medium text-green-900 dark:text-green-100">
+                    <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 backdrop-blur-sm border border-green-200 dark:border-green-800 hover:scale-105 transition-transform shadow-sm">
+                      <Shield className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-green-600 dark:text-green-400" />
+                      <span className="text-xs sm:text-sm font-medium text-green-900 dark:text-green-100">
                         Secure & Private
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 backdrop-blur-sm border border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform shadow-sm">
-                      <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                      <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                    <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 backdrop-blur-sm border border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform shadow-sm">
+                      <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-purple-600 dark:text-purple-400" />
+                      <span className="text-xs sm:text-sm font-medium text-purple-900 dark:text-purple-100">
                         AI-Powered
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-start gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 sm:gap-4">
                   <Button
                     size="lg"
-                    className="text-base px-8 h-14 gap-2 bg-primary transition-all hover:scale-105"
+                    className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 gap-2 bg-primary shadow-lg hover:shadow-xl transition-all hover:scale-105"
                   >
-                    <MessageSquare className="w-5 h-5" />
+                    <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5" />
                     Open Chat
                   </Button>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="text-base px-8 h-14 gap-2 border-2 hover:border-blue-600 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-all hover:scale-105"
+                    className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 gap-2 border-2 hover:border-blue-600 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-all hover:scale-105"
                   >
-                    <LayoutDashboard className="w-5 h-5" />
+                    <LayoutDashboard className="w-4 sm:w-5 h-4 sm:h-5" />
                     Dashboard
                   </Button>
                 </div>
               </div>
 
-              <div className="hidden relative lg:h-150 lg:flex items-center justify-center">
-                <div className="absolute inset-0 flex items-center justify-center">
+              <div className="hidden lg:block relative h-full min-h-125">
+                <div className="absolute inset-0">
                   <Card className="absolute top-[15%] left-[10%] p-5 shadow-2xl border-2 backdrop-blur-sm bg-linear-to-br from-background/95 to-background/80 transform rotate-3 hover:rotate-0 hover:scale-105 transition-all duration-500 w-80 animate-float">
                     <div className="flex items-start gap-3">
                       <div className="w-12 h-12 rounded-full bg-linear-to-br from-blue-600 via-cyan-600 to-blue-700 flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-blue-300 dark:ring-blue-500">
