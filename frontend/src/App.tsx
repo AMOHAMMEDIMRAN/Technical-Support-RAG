@@ -4,6 +4,7 @@ import { indexRoute } from "./routes/index";
 import { ThemeProvider } from "./presentation/components/theme/theme-provider";
 
 
+
 const routeTree = rootRoute.addChildren([indexRoute]);
 const router = createRouter({ routeTree });
 
