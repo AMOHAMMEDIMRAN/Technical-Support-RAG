@@ -50,26 +50,23 @@ const Hero = () => {
                     technical questions.
                   </p>
 
-                  <div className="flex flex-wrap gap-3">
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 backdrop-blur-sm border border-yellow-200 dark:border-yellow-800 hover:scale-105 transition-transform shadow-sm">
-                      <Zap className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-                      <span className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
-                        Lightning Fast
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 backdrop-blur-sm border border-green-200 dark:border-green-800 hover:scale-105 transition-transform shadow-sm">
-                      <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
-                      <span className="text-sm font-medium text-green-900 dark:text-green-100">
-                        Secure & Private
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 backdrop-blur-sm border border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform shadow-sm">
-                      <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                      <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                        AI-Powered
-                      </span>
-                    </div>
-                  </div>
+ <div className="flex flex-wrap gap-3">
+  <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted border border-border text-muted-foreground hover:text-foreground transition">
+    <Zap className="w-4 h-4 text-primary" />
+    <span className="text-sm font-medium">Fast responses</span>
+  </div>
+
+  <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted border border-border text-muted-foreground hover:text-foreground transition">
+    <Shield className="w-4 h-4 text-primary" />
+    <span className="text-sm font-medium">Privacy first</span>
+  </div>
+
+  <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted border border-border text-muted-foreground hover:text-foreground transition">
+    <Sparkles className="w-4 h-4 text-primary" />
+    <span className="text-sm font-medium">Smart assistance</span>
+  </div>
+</div>
+
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-start gap-4">
