@@ -3,13 +3,11 @@ import { Badge } from "@/presentation/components/ui/badge";
 
  import {
   MessageSquare,
-  LayoutDashboard,
-  Sparkles,
+   Sparkles,
   Building2,
   Zap,
   Shield,
-  Star,
-} from "lucide-react";
+ } from "lucide-react";
 
 
 
