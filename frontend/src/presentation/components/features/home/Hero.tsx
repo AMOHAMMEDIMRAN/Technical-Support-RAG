@@ -1,17 +1,53 @@
+import { useState } from "react";
 import { Button } from "@/presentation/components/ui/button";
 import { Badge } from "@/presentation/components/ui/badge";
 import { useAuthStore } from "@/presentation/stores/authStore";
+import { useNavigate } from "@tanstack/react-router";
+import { UserRole } from "@/core/domain/types";
+import Login from "@/presentation/components/features/login/Login";
 
-import { MessageSquare, Sparkles, Building2, Zap, Shield } from "lucide-react";
+import {
+  MessageSquare,
+  Sparkles,
+  LayoutDashboard,
+  Zap,
+  Shield,
+} from "lucide-react";
 
 const Hero = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const [showLogin, setShowLogin] = useState(false);
+  const navigate = useNavigate();
+
+  const handleOpenChat = () => {
+    if (isAuthenticated) {
+      // Navigate to chat page
+      navigate({ to: "/chat" });
+    } else {
+      // Show login modal
+      setShowLogin(true);
+    }
+  };
 
   return (
     <main className="h-[calc(100vh-4rem)]">
       <section className="relative overflow-hidden h-full">
+        {/* Background gradient */}
         <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-cyan-50 to-purple-50 dark:from-blue-950/20 dark:via-cyan-950/20 dark:to-purple-950/20" />
 
+        {/* Grid pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-30 dark:opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgb(148 163 184 / 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgb(148 163 184 / 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: "80px 80px",
+          }}
+        />
+
+        {/* Blur effects */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-linear-to-r from-blue-400 to-cyan-400 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl opacity-20 animate-pulse" />
         <div
           className="absolute bottom-0 right-1/4 w-96 h-96 bg-linear-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl opacity-20 animate-pulse"
@@ -56,27 +92,28 @@ const Hero = () => {
                 </div>
               </div>
 
-<div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 sm:gap-4">
-  <Button
-    size="lg"
-    className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-12 gap-2"
-  >
-    <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5" />
-    Open chat
-  </Button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 sm:gap-4">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-12 gap-2"
+                  onClick={handleOpenChat}
+                >
+                  <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5" />
+                  Open chat
+                </Button>
 
-  {isAuthenticated && (
-    <Button
-      variant="outline"
-      size="lg"
-      className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-12 gap-2"
-    >
-      <Building2 className="w-4 sm:w-5 h-4 sm:h-5" />
-      Create organization
-    </Button>
-  )}
-</div>
-
+                {isAuthenticated && user?.role === UserRole.SUPER_ADMIN && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-12 gap-2"
+                    onClick={() => navigate({ to: "/dashboard" })}
+                  >
+                    <LayoutDashboard className="w-4 sm:w-5 h-4 sm:h-5" />
+                    Dashboard
+                  </Button>
+                )}
+              </div>
             </div>
 
             <div className="hidden lg:block relative h-full min-h-125">
@@ -89,6 +126,11 @@ const Hero = () => {
           </div>
         </div>
       </section>
+
+      {/* Login Modal */}
+      {showLogin && (
+        <Login onClose={() => setShowLogin(false)} redirectTo="/chat" />
+      )}
     </main>
   );
 };
