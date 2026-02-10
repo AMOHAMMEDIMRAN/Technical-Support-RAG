@@ -48,8 +48,7 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use("/api", limiter);
-
+ 
 // Body parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -72,7 +71,7 @@ app.get("/", (_req, res) => {
 });
 
 // API routes
-app.use("/api", routes);
+app.use("/api", limiter, routes);
 
 // 404 handler
 app.use(notFound);
