@@ -2,6 +2,8 @@ import { useState } from "react"
 import { ModeToggle } from "../theme/mode-toggle"
 import { Button } from "../ui/button"
 import Login from "../features/login/Login"
+import { useAuthStore } from "@/presentation/stores/authStore";
+
 
 const Header = () => {
   const [showLogin, setShowLogin] = useState(false)
@@ -16,7 +18,7 @@ const Header = () => {
           </div>
           <div className="flex items-center gap-3">
             <ModeToggle />
-            <Button onClick={() => setShowLogin(true)}>Login</Button>
+            <AuthButton onLoginOpen={() => setShowLogin(true)} />
           </div>
         </div>
       </header>
@@ -27,3 +29,26 @@ const Header = () => {
 }
 
 export default Header
+
+
+
+ 
+export const AuthButton = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
+  const { isAuthenticated, logout, isLoading } = useAuthStore();
+
+  return isAuthenticated ? (
+    <Button
+      variant="destructive"
+      onClick={logout}
+      disabled={isLoading}
+    >
+      Logout
+    </Button>
+  ) : (
+    <Button onClick={onLoginOpen}>
+      Login
+    </Button>
+  );
+};
+
+ 
