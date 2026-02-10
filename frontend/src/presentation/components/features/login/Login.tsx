@@ -4,11 +4,12 @@ import { Button } from "@/presentation/components/ui/button";
 import { Input } from "@/presentation/components/ui/input";
 import { Label } from "@/presentation/components/ui/label";
 import { useAuthStore } from "@/presentation/stores/authStore";
+import { UserRole } from "@/core/domain/types";
 import { Loader2 } from "lucide-react";
 
 const Login = ({
   onClose,
-  redirectTo = "/dashboard",
+  redirectTo,
 }: {
   onClose: () => void;
   redirectTo?: string;
@@ -23,10 +24,22 @@ const Login = ({
 
     try {
       await login(email, password);
-      // On success, close modal and redirect
+      // On success, close modal
       onClose();
-      // Redirect to specified page or dashboard
-      window.location.href = redirectTo;
+
+      // Get user from store to check role
+      const user = useAuthStore.getState().user;
+
+      // Determine redirect
+      let destination = redirectTo;
+      if (!destination) {
+        // If no redirectTo specified, check role
+        destination =
+          user?.role === UserRole.SUPER_ADMIN ? "/dashboard" : "/chat";
+      }
+
+      // Redirect to determined page
+      window.location.href = destination;
     } catch (err) {
       // Error is handled by the store
       console.error("Login failed:", err);
