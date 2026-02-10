@@ -10,6 +10,14 @@ export const createUser = catchAsync(
   async (req: AuthRequest, res: Response) => {
     const { email, firstName, lastName, role, password } = req.body;
 
+    // Check if user has an organization
+    if (!req.user!.organizationId) {
+      return res.status(400).json({
+        success: false,
+        error: "No organization assigned. Please create an organization first.",
+      });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -58,6 +66,12 @@ export const getUsers = catchAsync(async (req: AuthRequest, res: Response) => {
 
   // Non-super admin can only see users in their organization
   if (req.user!.role !== UserRole.SUPER_ADMIN) {
+    if (!req.user!.organizationId) {
+      return res.status(400).json({
+        success: false,
+        error: "No organization assigned. Please create an organization first.",
+      });
+    }
     query.organizationId = req.user!.organizationId;
   }
 

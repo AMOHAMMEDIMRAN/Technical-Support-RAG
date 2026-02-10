@@ -40,12 +40,12 @@ export const authenticate = async (
       });
     }
 
-    // Attach user to request
+    // Attach user to request - use DB values for latest data
     req.user = {
-      id: decoded.id,
-      email: decoded.email,
-      role: decoded.role,
-      organizationId: decoded.organizationId,
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+      organizationId: user.organizationId, // Use DB value, not JWT value
     };
 
     return next();

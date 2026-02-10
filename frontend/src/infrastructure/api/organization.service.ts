@@ -15,7 +15,15 @@ export const organizationService = {
     return response.data.data!;
   },
 
-  // Get My Organization
+  // Get Current User's Organization
+  getOrganization: async (): Promise<Organization> => {
+    const response = await apiClient.get<ApiResponse<Organization>>(
+      API_ENDPOINTS.MY_ORGANIZATION,
+    );
+    return response.data.data!;
+  },
+
+  // Get My Organization (alias for compatibility)
   getMyOrganization: async (): Promise<Organization> => {
     const response = await apiClient.get<ApiResponse<Organization>>(
       API_ENDPOINTS.MY_ORGANIZATION,

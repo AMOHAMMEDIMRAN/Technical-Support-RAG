@@ -3,10 +3,26 @@ import { rootRoute } from "./routes/root";
 import { indexRoute } from "./routes/index";
 import { chatRoute } from "./routes/chat";
 import { ThemeProvider } from "./presentation/components/theme/theme-provider";
+import { TooltipProvider } from "./presentation/components/ui/tooltip";
 import { useAuthInit } from "./presentation/hooks/useAuthInit";
-import { dashboardRoute } from "./routes/dashboardRoute";
+import {
+  dashboardRoute,
+  dashboardIndexRoute,
+  dashboardUsersRoute,
+  dashboardOrganizationRoute,
+  dashboardSettingsRoute,
+} from "./routes/dashboardRoute";
 
-const routeTree = rootRoute.addChildren([indexRoute, chatRoute, dashboardRoute]);
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  chatRoute,
+  dashboardRoute.addChildren([
+    dashboardIndexRoute,
+    dashboardUsersRoute,
+    dashboardOrganizationRoute,
+    dashboardSettingsRoute,
+  ]),
+]);
 const router = createRouter({ routeTree });
 
 const App = () => {
@@ -15,7 +31,9 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <TooltipProvider>
+        <RouterProvider router={router} />
+      </TooltipProvider>
     </ThemeProvider>
   );
 };
