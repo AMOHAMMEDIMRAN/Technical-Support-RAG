@@ -96,12 +96,17 @@ export const getUsers = catchAsync(async (req: AuthRequest, res: Response) => {
 
   const pagination = getPaginationMeta(page!, limit!, total);
 
-  res.json({
-    success: true,
-    data: users,
-    pagination,
-  });
+res.json({
+  success: true,
+  data: {
+    users,
+    total: pagination.total,
+    page: pagination.page,
+    totalPages: pagination.totalPages,
+  },
 });
+
+})
 
 export const getUser = catchAsync(async (req: AuthRequest, res: Response) => {
   const { id } = req.params;

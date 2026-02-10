@@ -27,19 +27,24 @@ const Login = ({
       // On success, close modal
       onClose();
 
-      // Get user from store to check role
-      const user = useAuthStore.getState().user;
-
+  
       // Determine redirect
-      let destination = redirectTo;
-      if (!destination) {
-        // If no redirectTo specified, check role
-        destination =
-          user?.role === UserRole.SUPER_ADMIN ? "/dashboard" : "/chat";
-      }
+      
+let destination = redirectTo
 
-      // Redirect to determined page
-      window.location.href = destination;
+if (!destination) {
+  const user = useAuthStore.getState().user
+
+destination =
+  user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.CEO
+    ? "/dashboard"
+    : "/chat"
+
+}
+
+window.location.href = destination
+
+
     } catch (err) {
       // Error is handled by the store
       console.error("Login failed:", err);
