@@ -6,7 +6,13 @@ import { Label } from "@/presentation/components/ui/label";
 import { useAuthStore } from "@/presentation/stores/authStore";
 import { Loader2 } from "lucide-react";
 
-const Login = ({ onClose }: { onClose: () => void }) => {
+const Login = ({
+  onClose,
+  redirectTo = "/dashboard",
+}: {
+  onClose: () => void;
+  redirectTo?: string;
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, isLoading, error, clearError } = useAuthStore();
@@ -19,8 +25,8 @@ const Login = ({ onClose }: { onClose: () => void }) => {
       await login(email, password);
       // On success, close modal and redirect
       onClose();
-      // Optionally redirect to dashboard
-      window.location.href = "/dashboard";
+      // Redirect to specified page or dashboard
+      window.location.href = redirectTo;
     } catch (err) {
       // Error is handled by the store
       console.error("Login failed:", err);
