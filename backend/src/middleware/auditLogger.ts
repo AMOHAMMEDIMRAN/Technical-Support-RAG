@@ -36,7 +36,7 @@ export const auditLogger = (action: AuditAction, resource: string) => {
       return originalJson(body);
     };
 
-    next();
+    return next();
   };
 };
 

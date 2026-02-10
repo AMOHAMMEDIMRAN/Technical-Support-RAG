@@ -36,7 +36,7 @@ export const requireRole = (...allowedRoles: UserRole[]) => {
       });
     }
 
-    next();
+    return next();
   };
 };
 
@@ -61,7 +61,7 @@ export const requireMinRole = (minRole: UserRole) => {
       });
     }
 
-    next();
+    return next();
   };
 };
 
@@ -90,7 +90,7 @@ export const requireOrganization = (
     });
   }
 
-  next();
+  return next();
 };
 
 // Check if user can access resource in same organization
@@ -120,7 +120,7 @@ export const requireSameOrganization = (
     });
   }
 
-  next();
+  return next();
 };
 
 // Check if user is super admin
@@ -136,7 +136,7 @@ export const requireSuperAdmin = (
     });
   }
 
-  next();
+  return next();
 };
 
 // Check if user is organization admin (CEO)
@@ -162,5 +162,5 @@ export const requireOrgAdmin = (
     });
   }
 
-  next();
+  return next();
 };
