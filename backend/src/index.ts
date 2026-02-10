@@ -62,7 +62,7 @@ if (config.nodeEnv === "development") {
 }
 
 // Root route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.json({
     success: true,
     message: "Internal Technical Support Assistant API",

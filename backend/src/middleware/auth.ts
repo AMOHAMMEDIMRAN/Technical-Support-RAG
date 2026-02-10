@@ -48,7 +48,7 @@ export const authenticate = async (
       organizationId: decoded.organizationId,
     };
 
-    next();
+    return next();
   } catch (error: any) {
     if (error.name === "JsonWebTokenError") {
       return res.status(401).json({
@@ -93,8 +93,8 @@ export const optionalAuthenticate = async (
     };
 
     req.user = decoded;
-    next();
+    return next();
   } catch (error) {
-    next();
+    return next();
   }
 };
