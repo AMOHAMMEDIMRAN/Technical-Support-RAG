@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import chromadb
@@ -11,13 +11,12 @@ import os
 
 app = FastAPI(title="Minimal RAG")
 
-# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins in development
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -44,15 +43,15 @@ class AskRequest(BaseModel):
 def clean_text(text: str) -> str:
     return " ".join(str(text).split())
 
-@app.post("/load_project")
-def load_project():
 
+def load_project_data():
     file_path = os.path.join(BASE_DIR, "data", "Project.csv")
 
     if not os.path.exists(file_path):
-        return {"error": "Project.csv not found inside data folder"}
-
-    df = pd.read_csv(file_path)
+        print("Project.csv not found")
+        return
+# load data how much you
+    df = pd.read_csv(file_path).head(5)
 
     try:
         collection.delete(where={})
@@ -70,7 +69,11 @@ App Type: {row.get('appType', '')}
 """
         chunks.append(clean_text(text))
 
-    embeddings = embedding_model.encode(chunks).tolist()
+    embeddings = embedding_model.encode(
+        chunks,
+        batch_size=8
+    ).tolist()
+
     ids = [f"project_{i}" for i in range(len(chunks))]
 
     collection.add(
@@ -79,7 +82,12 @@ App Type: {row.get('appType', '')}
         ids=ids
     )
 
-    return {"projects_loaded": len(chunks)}
+    print(f"{len(chunks)} projects loaded successfully")
+
+@app.on_event("startup")
+def startup_event():
+    print("Loading project data on startup...")
+    load_project_data()
 
 @app.post("/ask")
 def ask_question(req: AskRequest):
@@ -92,20 +100,45 @@ def ask_question(req: AskRequest):
     )
 
     if not results["documents"] or not results["documents"][0]:
-        return {"error": "No data found. Call /load_project first."}
+        return {"error": "No data found."}
 
     retrieved_docs = results["documents"][0]
-    
-    # Fast mode: Return context directly as answer
-    # Skip LLM generation for speed
-    answer = "Based on the projects in our database, here are the most relevant results:\n\n"
-    for i, doc in enumerate(retrieved_docs, 1):
-        answer += f"{i}. {doc[:200]}...\n\n"
-    
+    context = "\n\n".join([clean_text(doc) for doc in retrieved_docs])
+
+    prompt = f"""
+You are a project database assistant.
+Answer ONLY using the provided context.
+Do NOT invent information.
+
+Context:
+{context}
+
+Question:
+{req.question}
+
+Answer:
+"""
+
+    inputs = tokenizer(prompt, return_tensors="pt")
+
+    with torch.no_grad():
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=150,
+            temperature=0.2,
+            do_sample=False
+        )
+
+    full_output = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    if "Answer:" in full_output:
+        answer = full_output.split("Answer:")[-1].strip()
+    else:
+        answer = full_output.strip()
+
     return {
         "question": req.question,
-        "answer": answer.strip(),
-        "context": retrieved_docs
+        "answer": answer
     }
 
 @app.get("/")

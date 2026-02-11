@@ -151,6 +151,9 @@ const SparkleIcon = () => (
 
 // ── Main component ────────────────────────────────────────
 const ChatPanel = () => {
+
+
+
   const { user, logout } = useAuthStore();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -196,6 +199,24 @@ const ChatPanel = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+//   useEffect(() => {
+//   let initialized = false;
+
+//   const initRag = async () => {
+//     if (initialized) return;
+//     initialized = true;
+
+//     const isAlive = await ragService.ping();
+//     if (isAlive) {
+//       await ragService.loadProjects();
+//       console.log("RAG data loaded");
+//     }
+//   };
+
+//   initRag();
+// }, []);
+
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -209,10 +230,10 @@ const ChatPanel = () => {
     setIsLoading(true);
 
     try {
-      const response = await ragService.ask({
-        question: userMsg.content,
-        platform: null,
-      });
+const response = await ragService.ask({
+  question: userMsg.content
+});
+
 
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
