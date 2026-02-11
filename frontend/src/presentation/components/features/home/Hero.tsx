@@ -102,17 +102,20 @@ const Hero = () => {
                   Open chat
                 </Button>
 
-                {isAuthenticated && user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.CEO && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-12 gap-2"
-                    onClick={() => navigate({ to: "/dashboard" })}
-                  >
-                    <LayoutDashboard className="w-4 sm:w-5 h-4 sm:h-5" />
-                    Dashboard
-                  </Button>
-                )}
+                {isAuthenticated &&
+                  (user?.role === UserRole.SUPER_ADMIN ||
+                    user?.role === UserRole.CEO ||
+                    user?.role === UserRole.MANAGER) && (
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-12 gap-2"
+                      onClick={() => navigate({ to: "/dashboard" })}
+                    >
+                      <LayoutDashboard className="w-4 sm:w-5 h-4 sm:h-5" />
+                      Dashboard
+                    </Button>
+                  )}
               </div>
             </div>
 

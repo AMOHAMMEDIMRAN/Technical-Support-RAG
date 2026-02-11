@@ -220,7 +220,7 @@ const SettingsPage = () => {
             </div>
             <div className="flex items-center justify-between rounded-xl bg-background px-4 py-3 border border-border">
               <span className="text-xs text-muted-foreground">Email</span>
-              <span className="text-sm font-medium truncate max-w-[140px]">{user?.email}</span>
+              <span className="text-sm font-medium truncate max-w-35">{user?.email}</span>
             </div>
             <div className="flex items-center justify-between rounded-xl bg-background px-4 py-3 border border-border">
               <span className="text-xs text-muted-foreground">Role</span>
