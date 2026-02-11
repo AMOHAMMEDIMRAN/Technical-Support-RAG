@@ -25,6 +25,7 @@ import {
 import { Button } from "@/presentation/components/ui/button";
 import { Avatar, AvatarFallback } from "@/presentation/components/ui/avatar";
 import { Badge } from "@/presentation/components/ui/badge";
+import { ModeToggle } from "../theme/mode-toggle";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -170,6 +171,7 @@ const DashboardLayout = ({
             <div className="flex-1">
               <h1 className="text-xl font-semibold capitalize">{activeView}</h1>
             </div>
+            <ModeToggle />
           </header>
           <main className="flex-1 p-6 overflow-auto">{children}</main>
         </div>

@@ -7,15 +7,14 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import type { Organization } from "@/core/domain/types";
-import { UserRole } from "@/core/domain/types";
-import DashboardLayout from "@/presentation/components/layouts/DashboardLayout";
+ import DashboardLayout from "@/presentation/components/layouts/DashboardLayout";
 import OrganizationForm from "@/presentation/components/features/dashboard/OrganizationForm";
 import { Alert, AlertDescription } from "@/presentation/components/ui/alert";
-import { Building2, AlertCircle } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { dashboardRoute } from "@/routes/dashboardRoute";
 
 const DashboardPage = () => {
-  const { user, isAuthenticated } = useAuthStore();
+  const {  isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const router = useRouter();
   const location = useLocation();

@@ -102,7 +102,7 @@ const Hero = () => {
                   Open chat
                 </Button>
 
-                {isAuthenticated && user?.role === UserRole.SUPER_ADMIN && (
+                {isAuthenticated && user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.CEO && (
                   <Button
                     variant="outline"
                     size="lg"
