@@ -14,13 +14,13 @@ const ragClient: AxiosInstance = axios.create({
 // Types
 export interface RagQuery {
   question: string;
-  platform?: string | null;
 }
+
 
 export interface RagResponse {
   question?: string;
   answer: string;
-  context: string[];
+context?: string[];
 }
 
 // RAG Service

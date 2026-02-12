@@ -7,7 +7,7 @@ export const API_CONFIG = {
 // RAG API Configuration
 export const RAG_API_CONFIG = {
   BASE_URL: import.meta.env.VITE_RAG_API_BASE_URL || "http://127.0.0.1:8000",
-  TIMEOUT: 120000, // 2 minutes for RAG processing
+  TIMEOUT: 180000, // 3 minutes for RAG processing
 };
 
 // API Endpoints
