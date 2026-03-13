@@ -1,10 +1,20 @@
 import { Response } from "express";
+import axios from "axios";
 import { Chat } from "../models";
 import { AuthRequest, ChatStatus } from "../types";
 import { catchAsync } from "../middleware";
 import { getPaginationParams, getSkipValue, getPaginationMeta } from "../utils";
 import { createAuditLog } from "../middleware/auditLogger";
 import { AuditAction } from "../types";
+
+const RAG_API_BASE_URL =
+  process.env.RAG_API_BASE_URL || "http://127.0.0.1:8000";
+const RAG_API_TIMEOUT = parseInt(process.env.RAG_API_TIMEOUT || "30000", 10);
+
+const ragClient = axios.create({
+  baseURL: RAG_API_BASE_URL,
+  timeout: RAG_API_TIMEOUT,
+});
 
 export const createChat = catchAsync(
   async (req: AuthRequest, res: Response) => {
@@ -122,19 +132,30 @@ export const sendMessage = catchAsync(
       timestamp: new Date(),
     });
 
-    // TODO: Call AI Engine to get response
-    // For now, add a mock response
-    const aiResponse =
-      "This is a mock AI response. Connect to AI Engine for real responses.";
+    // Call RAG/AI service for response
+    let aiContent =
+      "Sorry, I couldn't reach the AI service. Please try again shortly.";
+    let aiMetadata: { sources?: string[]; confidence?: number } | undefined;
+
+    try {
+      const ragResponse = await ragClient.post("/ask", {
+        question: message,
+      });
+
+      aiContent = ragResponse.data?.answer || aiContent;
+      aiMetadata = {
+        sources: ragResponse.data?.context,
+        confidence: ragResponse.data?.confidence,
+      };
+    } catch (err) {
+      console.error("RAG service error", err);
+    }
 
     chat.messages.push({
       role: "assistant",
-      content: aiResponse,
+      content: aiContent,
       timestamp: new Date(),
-      metadata: {
-        sources: [],
-        confidence: 0.95,
-      },
+      metadata: aiMetadata,
     });
 
     await chat.save();

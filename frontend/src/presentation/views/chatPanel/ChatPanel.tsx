@@ -1,35 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuthStore } from "@/presentation/stores/authStore";
-import { ragService } from "@/infrastructure/api/rag.service";
+import { chatService } from "@/infrastructure/api/chat.service";
+import type { Chat, Message } from "@/core/domain/types";
+import { Button } from "@/presentation/components/ui/button";
 
 // ── Types ────────────────────────────────────────────────
-interface ChatItem {
-  id: string;
-  title: string;
-  timestamp: string;
-}
-
 interface Project {
   id: string;
   name: string;
   color: string;
 }
-
-interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-}
-
-// ── Mock data ─────────────────────────────────────────────
-const MOCK_CHATS: ChatItem[] = [
-  { id: "1", title: "Onboarding workflow help", timestamp: "Today" },
-  { id: "2", title: "Q3 report analysis", timestamp: "Today" },
-  { id: "3", title: "Bug in auth middleware", timestamp: "Yesterday" },
-  { id: "4", title: "Salary structure review", timestamp: "Yesterday" },
-  { id: "5", title: "Marketing campaign copy", timestamp: "Mon" },
-  { id: "6", title: "Database optimisation", timestamp: "Sun" },
-];
 
 const MOCK_PROJECTS: Project[] = [
   { id: "p1", name: "Product Roadmap", color: "bg-violet-500" },
@@ -37,8 +17,9 @@ const MOCK_PROJECTS: Project[] = [
   { id: "p3", name: "Dev Infra", color: "bg-sky-500" },
 ];
 
-// ── Sub-components ────────────────────────────────────────
+type ChatMessage = Message & { _id?: string };
 
+// ── Icons ────────────────────────────────────────────────
 const SearchIcon = () => (
   <svg
     width="15"
@@ -149,28 +130,43 @@ const SparkleIcon = () => (
   </svg>
 );
 
+const TrashIcon = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+    <path d="M10 11v6" />
+    <path d="M14 11v6" />
+    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+  </svg>
+);
+
 // ── Main component ────────────────────────────────────────
 const ChatPanel = () => {
-
-
-
   const { user, logout } = useAuthStore();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeChat, setActiveChat] = useState<string | null>("1");
+  const [activeChat, setActiveChat] = useState<string | null>(null);
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [loadingChats, setLoadingChats] = useState(false);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showNewProject, setShowNewProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "m1",
-      role: "assistant",
-      content: "Hi there! How can I help you today?",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -181,6 +177,46 @@ const ChatPanel = () => {
   const handleLogout = async () => {
     await logout();
     window.location.href = "/";
+  };
+
+  const loadChats = async (opts?: { selectFirst?: boolean }) => {
+    setLoadingChats(true);
+    setError(null);
+    try {
+      const { data } = await chatService.listChats({
+        sortBy: "updatedAt",
+        sortOrder: "desc",
+        limit: 50,
+      });
+
+      setChats(data);
+
+      if (opts?.selectFirst && data.length > 0) {
+        await handleSelectChat(data[0]._id);
+      }
+    } catch (err) {
+      console.error("Failed to load chats", err);
+      setError("Unable to load chat history. Please try again.");
+    } finally {
+      setLoadingChats(false);
+    }
+  };
+
+  const handleSelectChat = async (chatId: string) => {
+    setActiveChat(chatId);
+    setLoadingMessages(true);
+    setError(null);
+
+    try {
+      const chat = await chatService.getChat(chatId);
+      setMessages(chat.messages ?? []);
+    } catch (err) {
+      console.error("Failed to load chat", err);
+      setError("Unable to load this conversation.");
+      setMessages([]);
+    } finally {
+      setLoadingMessages(false);
+    }
   };
 
   // Close modal on outside click
@@ -194,64 +230,53 @@ const ChatPanel = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Initial load
+  useEffect(() => {
+    loadChats({ selectFirst: true });
+  }, []);
+
   // Scroll to bottom on new message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-//   useEffect(() => {
-//   let initialized = false;
-
-//   const initRag = async () => {
-//     if (initialized) return;
-//     initialized = true;
-
-//     const isAlive = await ragService.ping();
-//     if (isAlive) {
-//       await ragService.loadProjects();
-//       console.log("RAG data loaded");
-//     }
-//   };
-
-//   initRag();
-// }, []);
-
-
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isSending) return;
 
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      content: input.trim(),
-    };
-    setMessages((prev) => [...prev, userMsg]);
+    const content = input.trim();
     setInput("");
-    setIsLoading(true);
+    setIsSending(true);
+    setError(null);
 
     try {
-const response = await ragService.ask({
-  question: userMsg.content
-});
+      if (!activeChat) {
+        const newChat = await chatService.createChat({
+          title: content.slice(0, 60) || "New conversation",
+          message: content,
+        });
 
+        setChats((prev) => [newChat, ...prev]);
+        setActiveChat(newChat._id);
+        setMessages(newChat.messages ?? []);
+      } else {
+        // Optimistic user message so the UI feels responsive
+        setMessages((prev) => [
+          ...prev,
+          { role: "user", content, timestamp: new Date().toISOString() },
+        ]);
 
-      const botMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: response.answer,
-      };
-      setMessages((prev) => [...prev, botMsg]);
-    } catch (error) {
-      console.error("RAG service error:", error);
-      const errorMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content:
-          "I'm sorry, I encountered an error processing your request. Please make sure the RAG service is running on http://127.0.0.1:8000",
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+        const updated = await chatService.sendMessage(activeChat, content);
+        setMessages(updated.messages ?? []);
+        setChats((prev) => {
+          const filtered = prev.filter((c) => c._id !== updated._id);
+          return [updated, ...filtered];
+        });
+      }
+    } catch (err) {
+      console.error("Failed to send message", err);
+      setError("Unable to send message. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsSending(false);
     }
   };
 
@@ -264,13 +289,26 @@ const response = await ragService.ask({
 
   const handleNewChat = () => {
     setActiveChat(null);
-    setMessages([
-      {
-        id: "new",
-        role: "assistant",
-        content: "New conversation started. What's on your mind?",
-      },
-    ]);
+    setMessages([]);
+  };
+
+  const handleDeleteChat = async (chatId: string) => {
+    if (!window.confirm("Delete this chat?")) return;
+    setDeletingId(chatId);
+    setError(null);
+    try {
+      await chatService.deleteChat(chatId);
+      setChats((prev) => prev.filter((c) => c._id !== chatId));
+      if (activeChat === chatId) {
+        setActiveChat(null);
+        setMessages([]);
+      }
+    } catch (err) {
+      console.error("Failed to delete chat", err);
+      setError("Unable to delete chat. Please try again.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleAddProject = () => {
@@ -293,14 +331,9 @@ const response = await ragService.ask({
     setShowNewProject(false);
   };
 
-  const filteredChats = MOCK_CHATS.filter((c) =>
+  const filteredChats = chats.filter((c) =>
     c.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
-  const grouped = filteredChats.reduce<Record<string, ChatItem[]>>((acc, c) => {
-    acc[c.timestamp] = [...(acc[c.timestamp] || []), c];
-    return acc;
-  }, {});
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -396,31 +429,81 @@ const response = await ragService.ask({
             History
           </p>
 
-          {Object.entries(grouped).map(([timestamp, chats]) => (
-            <div key={timestamp}>
-              <p className="text-[10px] text-muted-foreground/60 px-2 py-1">
-                {timestamp}
-              </p>
-              {chats.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => setActiveChat(chat.id)}
-                  className={`w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors group ${
-                    activeChat === chat.id
-                      ? "bg-accent text-foreground"
-                      : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
-                  }`}
-                >
-                  <span className="shrink-0 text-muted-foreground/50">
-                    <ChatBubbleIcon />
-                  </span>
-                  <span className="truncate text-xs">{chat.title}</span>
-                </button>
-              ))}
+          {loadingChats && (
+            <div className="space-y-2 px-2">
+              <div className="h-3 w-3/4 rounded bg-muted animate-pulse" />
+              <div className="h-3 w-2/3 rounded bg-muted animate-pulse" />
+              <div className="h-3 w-5/6 rounded bg-muted animate-pulse" />
             </div>
-          ))}
+          )}
 
-          {filteredChats.length === 0 && (
+          {!loadingChats &&
+            filteredChats.map((chat) => (
+              <div
+                key={chat._id}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSelectChat(chat._id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSelectChat(chat._id);
+                  }
+                }}
+                className={`w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors group outline-none ${
+                  activeChat === chat._id
+                    ? "bg-accent text-foreground"
+                    : "text-muted-foreground hover:bg-accent/60 hover:text-foreground focus:ring-2 focus:ring-primary/30"
+                }`}
+              >
+                <span className="shrink-0 text-muted-foreground/50">
+                  <ChatBubbleIcon />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="truncate text-xs font-medium">{chat.title}</p>
+                  <p className="text-[10px] text-muted-foreground/70">
+                    {new Date(chat.updatedAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteChat(chat._id);
+                  }}
+                  disabled={deletingId === chat._id}
+                  title="Delete chat"
+                >
+                  {deletingId === chat._id ? (
+                    <svg
+                      className="animate-spin h-3.5 w-3.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                  ) : (
+                    <TrashIcon />
+                  )}
+                </Button>
+              </div>
+            ))}
+
+          {!loadingChats && filteredChats.length === 0 && (
             <p className="text-xs text-muted-foreground/50 px-2 py-4 text-center">
               No chats found
             </p>
@@ -520,39 +603,54 @@ const response = await ragService.ask({
           </div>
         </div>
 
+        {error && (
+          <div className="px-6 py-2 text-xs text-destructive bg-destructive/10 border-b border-border">
+            {error}
+          </div>
+        )}
+
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex items-start gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
-            >
-              {/* Avatar */}
-              <div
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-                  msg.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-primary/10 text-primary"
-                }`}
-              >
-                {msg.role === "user" ? initials || "U" : "AI"}
-              </div>
-
-              {/* Bubble */}
-              <div
-                className={`max-w-[72%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                  msg.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-tr-sm"
-                    : "bg-card border border-border text-foreground rounded-tl-sm"
-                }`}
-              >
-                {msg.content}
-              </div>
+          {loadingMessages && (
+            <div className="space-y-3">
+              <div className="h-4 w-1/2 rounded bg-muted animate-pulse" />
+              <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
+              <div className="h-4 w-2/3 rounded bg-muted animate-pulse" />
             </div>
-          ))}
+          )}
 
-          {/* Loading indicator */}
-          {isLoading && (
+          {!loadingMessages &&
+            messages.map((msg, idx) => (
+              <div
+                key={msg._id || msg.timestamp || idx}
+                className={`flex items-start gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+              >
+                {/* Avatar */}
+                <div
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                    msg.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-primary/10 text-primary"
+                  }`}
+                >
+                  {msg.role === "user" ? initials || "U" : "AI"}
+                </div>
+
+                {/* Bubble */}
+                <div
+                  className={`max-w-[72%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                    msg.role === "user"
+                      ? "bg-primary text-primary-foreground rounded-tr-sm"
+                      : "bg-card border border-border text-foreground rounded-tl-sm"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+
+          {/* Sending indicator */}
+          {isSending && (
             <div className="flex items-start gap-3">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold bg-primary/10 text-primary">
                 AI
@@ -598,10 +696,10 @@ const response = await ragService.ask({
             />
             <button
               onClick={handleSend}
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isSending}
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
-              {isLoading ? (
+              {isSending ? (
                 <svg
                   className="animate-spin h-4 w-4"
                   viewBox="0 0 24 24"
