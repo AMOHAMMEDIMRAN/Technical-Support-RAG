@@ -19,6 +19,7 @@ export const config = {
   },
   aiEngine: {
     url: process.env.AI_ENGINE_URL || "http://localhost:8000",
+    timeout: parseInt(process.env.AI_ENGINE_TIMEOUT || "120000", 10),
   },
   upload: {
     maxFileSize: parseInt(process.env.MAX_FILE_SIZE || "10485760"), // 10MB default

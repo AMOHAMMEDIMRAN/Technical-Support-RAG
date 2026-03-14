@@ -6,14 +6,14 @@ import { catchAsync } from "../middleware";
 import { getPaginationParams, getSkipValue, getPaginationMeta } from "../utils";
 import { createAuditLog } from "../middleware/auditLogger";
 import { AuditAction } from "../types";
-
-const RAG_API_BASE_URL =
-  process.env.RAG_API_BASE_URL || "http://127.0.0.1:8000";
-const RAG_API_TIMEOUT = parseInt(process.env.RAG_API_TIMEOUT || "30000", 10);
+import { config } from "../config";
 
 const ragClient = axios.create({
-  baseURL: RAG_API_BASE_URL,
-  timeout: RAG_API_TIMEOUT,
+  baseURL: process.env.RAG_API_BASE_URL || config.aiEngine.url,
+  timeout: parseInt(
+    process.env.RAG_API_TIMEOUT || `${config.aiEngine.timeout}`,
+    10,
+  ),
 });
 
 export const createChat = catchAsync(

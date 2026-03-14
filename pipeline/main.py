@@ -124,7 +124,7 @@ Answer:
     with torch.no_grad():
         outputs = model.generate(
             **inputs,
-            max_new_tokens=150,
+            max_new_tokens=80,  # keep responses shorter to reduce latency
             temperature=0.2,
             do_sample=False
         )
