@@ -1,13 +1,14 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import chromadb
-from chromadb.config import Settings
-import torch
-import pandas as pd
 import os
+
+import chromadb
+import pandas as pd
+import torch
+from chromadb.config import Settings
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from sentence_transformers import SentenceTransformer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 app = FastAPI(title="Minimal RAG")
 
@@ -21,8 +22,10 @@ app.add_middleware(
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "data", "chroma")
+EMBEDDING_MODEL_NAME = "BAAI/bge-small-en-v1.5"
+GENERATION_MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 
-embedding_model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 client = chromadb.Client(
     Settings(persist_directory=DB_PATH, is_persistent=True)
@@ -30,10 +33,10 @@ client = chromadb.Client(
 
 collection = client.get_or_create_collection(name="rag_collection")
 
-tokenizer = AutoTokenizer.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+tokenizer = AutoTokenizer.from_pretrained(GENERATION_MODEL_NAME)
 
 model = AutoModelForCausalLM.from_pretrained(
-    "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    GENERATION_MODEL_NAME,
     torch_dtype=torch.float32
 )
 
@@ -44,18 +47,18 @@ def clean_text(text: str) -> str:
     return " ".join(str(text).split())
 
 
-def load_project_data():
+def load_project_data() -> None:
     file_path = os.path.join(BASE_DIR, "data", "Project.csv")
 
     if not os.path.exists(file_path):
         print("Project.csv not found")
         return
-# load data how much you
+    # Keep startup indexing lightweight for local development.
     df = pd.read_csv(file_path).head(5)
 
     try:
         collection.delete(where={})
-    except:
+    except Exception:
         pass
 
     chunks = []
@@ -84,10 +87,12 @@ App Type: {row.get('appType', '')}
 
     print(f"{len(chunks)} projects loaded successfully")
 
+
 @app.on_event("startup")
 def startup_event():
     print("Loading project data on startup...")
     load_project_data()
+
 
 @app.post("/ask")
 def ask_question(req: AskRequest):

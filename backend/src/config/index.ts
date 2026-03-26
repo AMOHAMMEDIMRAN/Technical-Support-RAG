@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const config = {
+  host: process.env.HOST || "0.0.0.0",
   port: process.env.PORT || 5000,
   nodeEnv: process.env.NODE_ENV || "development",
   mongoUri:
@@ -26,10 +27,12 @@ export const config = {
     uploadPath: process.env.UPLOAD_PATH || "./uploads",
   },
   cors: {
-    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || [
-      "http://localhost:5173",
-      "http://localhost:7878",
-    ],
+    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean) || ["http://localhost:5173", "http://localhost:7878"],
+    allowPrivateNetworkOrigins:
+      process.env.CORS_ALLOW_PRIVATE_NETWORK_ORIGINS === "true" ||
+      process.env.NODE_ENV !== "production",
   },
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || "900000"), // 15 minutes

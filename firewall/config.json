@@ -1,0 +1,31 @@
+{
+  "enabled": true,
+  "mode": "laptop",
+  "blockedIps": [],
+  "allowedIps": [],
+  "blockedUserAgents": [],
+  "blockedPaths": [],
+  "bypassPaths": [
+    "/api/health",
+    "/api/auth/login"
+  ],
+  "blockedUsers": [
+    {
+      "userId": "69b4f15f66a9dd2e228fae5b",
+      "email": "magesh@gmail.com",
+      "firstName": "magesh",
+      "lastName": "coder",
+      "blockedAt": "2026-03-26T06:56:24.249Z",
+      "blockedBy": {
+        "id": "69b3b50442c838ea28ef79eb",
+        "email": "admin123@gmail.com"
+      }
+    }
+  ],
+  "customBlockMessage": "Access denied by firewall policy",
+  "updatedAt": "2026-03-26T06:56:31.956Z",
+  "updatedBy": {
+    "id": "69b3b50442c838ea28ef79eb",
+    "email": "admin123@gmail.com"
+  }
+}

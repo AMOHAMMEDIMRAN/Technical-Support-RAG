@@ -119,7 +119,7 @@ export interface IAuditLog extends Document {
   action: AuditAction;
   resource: string;
   resourceId?: string;
-  details?: any;
+  details?: unknown;
   ipAddress?: string;
   userAgent?: string;
   timestamp: Date;
@@ -132,17 +132,7 @@ export interface AuthRequest extends Request {
     role: UserRole;
     organizationId?: string;
   };
-  file?: {
-    fieldname: string;
-    originalname: string;
-    encoding: string;
-    mimetype: string;
-    size: number;
-    destination: string;
-    filename: string;
-    path: string;
-    buffer: Buffer;
-  };
+  file?: Express.Multer.File;
 }
 
 export interface PaginationQuery {
@@ -152,7 +142,7 @@ export interface PaginationQuery {
   sortOrder?: "asc" | "desc";
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
   data?: T;

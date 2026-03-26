@@ -5,6 +5,7 @@ import userRoutes from "./userRoutes";
 import chatRoutes from "./chatRoutes";
 import documentRoutes from "./documentRoutes";
 import auditRoutes from "./auditRoutes";
+import firewallRoutes from "./firewallRoutes";
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use("/users", userRoutes);
 router.use("/chats", chatRoutes);
 router.use("/documents", documentRoutes);
 router.use("/audit-logs", auditRoutes);
+router.use("/firewall", firewallRoutes);
 
 export default router;
