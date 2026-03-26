@@ -46,7 +46,7 @@ const Login = ({
         className="relative w-full max-w-md rounded-2xl border border-border/70 bg-card shadow-2xl shadow-black/20 overflow-hidden animate-fade-in-up"
       >
         {/* Top accent bar */}
-        <div className="h-[3px] w-full bg-gradient-to-r from-primary via-primary/60 to-transparent" />
+        <div className="h-0.75 w-full bg-linear-to-r from-primary via-primary/60 to-transparent" />
 
         {/* Close button */}
         <button
