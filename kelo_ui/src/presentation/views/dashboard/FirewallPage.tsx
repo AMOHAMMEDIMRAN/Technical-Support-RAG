@@ -30,7 +30,7 @@ const TextareaField = ({ value, onChange, placeholder }: { value: string; onChan
     value={value}
     onChange={(e) => onChange(e.target.value)}
     placeholder={placeholder}
-    className="w-full min-h-[120px] rounded-xl border border-border/60 bg-background/60 px-3.5 py-3 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all resize-none"
+    className="w-full min-h-30 rounded-xl border border-border/60 bg-background/60 px-3.5 py-3 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all resize-none"
   />
 );
 
@@ -250,7 +250,7 @@ const FirewallPage = () => {
 
         {/* Blocked Users */}
         <SectionCard title="Blocked Users" desc="Block specific users from accessing the application.">
-          <div className="flex gap-2">
+          <div className="flex flex-col lg:flex-row gap-2">
             <select
               value={selectedUserId}
               onChange={(e) => setSelectedUserId(e.target.value)}
