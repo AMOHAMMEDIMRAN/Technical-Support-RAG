@@ -1,37 +1,156 @@
 # Technical-Support-RAG
 
-Enterprise-ready Technical Support assistant platform with:
+**Enterprise-ready AI-powered Technical Support Assistant Platform**
 
-- A TypeScript/Express backend API with RBAC, audit logs, organization/user management, and firewall controls
-- A React + Vite frontend (Kelo UI) for authentication, chat, dashboard, and admin workflows
-- A Python FastAPI RAG pipeline using ChromaDB + SentenceTransformers + TinyLlama
+A full-stack multi-service application featuring role-based access control, organization management, audit logging, and RAG-powered AI responses.
 
-This repository is organized as a multi-service workspace so each part can be developed independently and run together locally.
+---
 
-## 🚀 Quick Start (New Users Start Here!)
+## 🎯 What This Project Does
 
-### One-Command Setup
+This platform provides:
+
+- **🤖 AI-Powered Support:** RAG (Retrieval-Augmented Generation) for intelligent, context-aware responses
+- **👥 Multi-Tenancy:** Organization-level data isolation with role-based access
+- **🔐 Enterprise Security:** JWT authentication, firewall controls, IP blocking, audit trails
+- **💬 Real-Time Chat:** Persistent conversation history with AI assistant integration
+- **📊 Admin Dashboard:** User management, analytics, system configuration
+- **📁 Document Management:** Secure file upload/download with access controls
+- **📝 Audit Logging:** Complete activity tracking for compliance
+
+---
+
+## 🏗️ Architecture
+
+### **Three-Service Architecture**
+
+```
+┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+│  Frontend   │────────▶│   Backend   │────────▶│  Pipeline   │
+│  (Kelo UI)  │  HTTP   │   (API)     │  HTTP   │    (RAG)    │
+│  Port 7878  │         │  Port 5000  │         │  Port 8000  │
+└─────────────┘         └──────┬──────┘         └──────┬──────┘
+                               │                        │
+                               ▼                        ▼
+                        ┌─────────────┐         ┌─────────────┐
+                        │   MongoDB   │         │  ChromaDB   │
+                        │             │         │  + Models   │
+                        └─────────────┘         └─────────────┘
+```
+
+### **Technology Stack**
+
+| Layer        | Technologies                                                          |
+| ------------ | --------------------------------------------------------------------- |
+| **Frontend** | React 19, TypeScript, Vite, TanStack Router, Tailwind CSS v4, Zustand |
+| **Backend**  | Express.js, TypeScript, MongoDB, Mongoose, JWT, Bcrypt                |
+| **AI/RAG**   | FastAPI, Python, ChromaDB, SentenceTransformers, TinyLlama, PyTorch   |
+| **Security** | Helmet, CORS, Rate Limiting, IP Blocking, RBAC, Audit Logs            |
+
+---
+
+## 🚀 Quick Start
+
+### **Prerequisites**
+
+Install these before setup:
+
+| Software           | Version | Download                                                      |
+| ------------------ | ------- | ------------------------------------------------------------- |
+| **Node.js**        | 18+     | [nodejs.org](https://nodejs.org/)                             |
+| **Python**         | 3.10+   | [python.org](https://www.python.org/)                         |
+| **MongoDB**        | 6+      | [mongodb.com](https://www.mongodb.com/try/download/community) |
+| **Git**            | Latest  | [git-scm.com](https://git-scm.com/)                           |
+| **Bun** (Optional) | Latest  | [bun.sh](https://bun.sh/)                                     |
+
+**System Requirements:**
+
+- RAM: 8 GB+ (for AI model loading)
+- Disk: 5 GB+ (for models and dependencies)
+- Internet: Required for first-time model downloads
+
+### **Installation**
+
+#### **Step 1: Clone Repository**
+
+```bash
+git clone https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG.git
+cd Technical-Support-RAG
+```
+
+#### **Step 2: Run Setup Script**
 
 **Windows:**
 
 ```cmd
-git clone https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG.git
-cd Technical-Support-RAG
 setup.bat
 ```
 
 **Linux/Mac:**
 
 ```bash
-git clone https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG.git
-cd Technical-Support-RAG
 chmod +x setup.sh
 ./setup.sh
 ```
 
-The setup script will automatically install all dependencies for frontend, backend, and pipeline!
+This single command will:
 
-### Start All Services
+- ✅ Install all frontend dependencies (Kelo UI)
+- ✅ Install all backend dependencies (API)
+- ✅ Create Python virtual environment
+- ✅ Install all pipeline dependencies (RAG)
+- ✅ Validate installations
+
+#### **Step 3: Configure Environment**
+
+**Backend Configuration:**
+
+```cmd
+cd backend
+copy .env.example .env  # Windows
+# or: cp .env.example .env  # Linux/Mac
+```
+
+Edit `backend/.env`:
+
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/tech-support-assistant
+JWT_SECRET=your-super-secret-key-change-this
+ADMIN_EMAIL=admin123@gmail.com
+ADMIN_PASSWORD=admin123
+AI_ENGINE_URL=http://localhost:8000
+ALLOWED_ORIGINS=http://localhost:7878
+```
+
+**Frontend Configuration:**
+
+```cmd
+cd kelo_ui
+copy .env.example .env  # Windows
+# or: cp .env.example .env  # Linux/Mac
+```
+
+Edit `kelo_ui/.env`:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_RAG_API_BASE_URL=http://127.0.0.1:8000
+```
+
+#### **Step 4: Start MongoDB**
+
+```bash
+# Start MongoDB service
+mongod
+
+# Or as a service:
+net start MongoDB  # Windows
+sudo systemctl start mongod  # Linux
+brew services start mongodb-community  # Mac
+```
+
+#### **Step 5: Start All Services**
 
 **Windows:**
 
@@ -46,418 +165,381 @@ chmod +x start.sh
 ./start.sh
 ```
 
-### Access the Application
+This will open three terminal windows:
 
-- **Frontend:** http://localhost:7878
-- **Backend API:** http://localhost:5000
-- **Pipeline (RAG):** http://localhost:8000
+- 🔵 Frontend (port 7878)
+- 🟣 Backend (port 5000)
+- 🟢 Pipeline (port 8000)
 
-**Default Login:**
+#### **Step 6: Access the Application**
 
-- Email: `admin123@gmail.com`
-- Password: `admin123`
+Open your browser to: **http://localhost:7878**
 
-📖 **For detailed setup instructions, see [QUICK_START.md](QUICK_START.md)**
+**Default Login Credentials:**
+
+- **Email:** `admin123@gmail.com`
+- **Password:** `admin123`
+
+⚠️ **Important:** Change these credentials immediately after first login!
 
 ---
 
-## Table of Contents
+## 📁 Project Structure
 
-1. [Project Overview](#project-overview)
-2. [Repository Structure](#repository-structure)
-3. [Architecture](#architecture)
-4. [Prerequisites](#prerequisites)
-5. [Clone and Install](#clone-and-install)
-6. [Environment Configuration](#environment-configuration)
-7. [Run the Full Stack Locally](#run-the-full-stack-locally)
-8. [Backend Guide](#backend-guide)
-9. [Frontend Guide](#frontend-guide)
-10. [Pipeline Guide (RAG Service)](#pipeline-guide-rag-service)
-11. [Kelo UI Guide](#kelo-ui-guide)
-12. [API Route Map](#api-route-map)
-13. [Troubleshooting](#troubleshooting)
-14. [Production Notes](#production-notes)
-
-## Project Overview
-
-The platform supports secure internal technical-support conversations with role-based access, organization-level data isolation, and optional firewall policies.
-
-At runtime:
-
-1. The user interacts with the Kelo UI frontend.
-2. The frontend calls the backend API for auth, users, chats, documents, and firewall operations.
-3. For AI answers, the backend forwards chat questions to the Python RAG service.
-4. The RAG service retrieves relevant context from ChromaDB and generates a response.
-
-## Repository Structure
-
-```text
-.
-├─ backend/        # Express + TypeScript API layer
-├─ kelo_ui/        # React + Vite frontend application
-├─ pipeline/       # FastAPI RAG inference and retrieval pipeline
-├─ firewall/       # Persistent firewall policy file used by backend
-└─ README.md
+```
+Technical-Support-RAG/
+│
+├── backend/                    # Express.js API Server
+│   ├── src/
+│   │   ├── index.ts           # Entry point
+│   │   ├── config/            # Configuration management
+│   │   ├── models/            # MongoDB schemas
+│   │   ├── controllers/       # Request handlers
+│   │   ├── routes/            # API endpoints
+│   │   ├── middleware/        # Auth, RBAC, validation
+│   │   ├── firewall/          # IP/User blocking
+│   │   └── utils/             # Helpers
+│   ├── .env                   # Environment variables
+│   └── package.json           # Dependencies
+│
+├── kelo_ui/                   # React Frontend
+│   ├── src/
+│   │   ├── main.tsx           # Entry point
+│   │   ├── App.tsx            # Root component
+│   │   ├── routes/            # Page routes
+│   │   ├── components/        # UI components
+│   │   ├── infrastructure/    # API clients
+│   │   └── presentation/      # Views & stores
+│   ├── .env                   # Environment variables
+│   ├── vite.config.ts         # Vite configuration
+│   └── package.json           # Dependencies
+│
+├── pipeline/                  # Python RAG Service
+│   ├── main.py                # FastAPI app
+│   ├── data/
+│   │   ├── Project.csv        # Knowledge base
+│   │   └── chroma/            # Vector database
+│   ├── requirements.txt       # Python packages
+│   └── venv/                  # Virtual environment
+│
+├── firewall/                  # Firewall Configuration
+│   └── config.json            # Blocking rules
+│
+├── setup.bat                  # Windows setup script
+├── setup.sh                   # Linux/Mac setup script
+├── start.bat                  # Windows startup script
+├── start.sh                   # Linux/Mac startup script
+├── package.json               # Root npm scripts
+├── README.md                  # This file
+├── QUICK_START.md             # Quick start guide
+├── DEV_SETUP.md               # Development setup
+└── FILE_STRUCTURE.md          # Complete file documentation
 ```
 
-## Architecture
+---
 
-```mermaid
-flowchart LR
-	A[User Browser] --> B[Kelo UI / React]
-	B --> C[Backend API / Express]
-	C --> D[(MongoDB)]
-	C --> E[Firewall Policy JSON]
-	C --> F[RAG Pipeline / FastAPI]
-	F --> G[(ChromaDB)]
-	F --> H[Embedding + LLM Models]
-```
+## 🔑 Key Features
 
-## Prerequisites
+### **1. Authentication & Authorization**
 
-Install these before setup:
+- JWT-based authentication
+- 7 role types: SUPER_ADMIN, CEO, MANAGER, DEVELOPER, SUPPORT, HR, FINANCE
+- Organization-level data isolation
+- Password hashing with bcrypt
+- Automatic admin user creation on first run
 
-- Node.js 18+
-- npm 9+
-- Python 3.10+
-- MongoDB 6+
-- Git
+### **2. RAG-Powered AI Assistant**
 
-Recommended:
+- SentenceTransformers embeddings (BAAI/bge-small-en-v1.5)
+- ChromaDB for vector storage and retrieval
+- TinyLlama for response generation
+- Context-aware answers from project knowledge base
+- Configurable retrieval parameters
 
-- 8 GB+ RAM (model loading in pipeline can be memory-intensive)
-- Internet access for first-time model downloads in the pipeline
+### **3. Chat Management**
 
-## Clone and Install
+- Persistent conversation history
+- Real-time AI responses
+- Message threading
+- Chat archiving
+- Search and filtering
+
+### **4. Organization Management**
+
+- Multi-tenant architecture
+- Custom organization settings
+- User quotas and limits
+- Feature toggles per organization
+
+### **5. User Management**
+
+- CRUD operations for users
+- Role assignment
+- Status management (Active/Inactive/Suspended)
+- Last login tracking
+- Bulk operations
+
+### **6. Document Management**
+
+- Secure file upload/download
+- Access control (Public, Role-based, Private)
+- Metadata tagging
+- File type restrictions
+- Size limits
+
+### **7. Audit Logging**
+
+- Automatic activity tracking
+- Action types: CREATE, READ, UPDATE, DELETE, LOGIN, LOGOUT
+- IP address and user agent capture
+- Searchable and filterable logs
+- Compliance-ready
+
+### **8. Firewall & Security**
+
+- IP address blocking
+- User blocking
+- Path-based access control
+- Rate limiting (100 requests per 15 minutes)
+- Bypass rules for health checks
+- Security headers (Helmet.js)
+
+---
+
+## 📡 API Endpoints
+
+### **Base URL:** `http://localhost:5000/api`
+
+| Category     | Method         | Endpoint                         | Auth | Description                    |
+| ------------ | -------------- | -------------------------------- | ---- | ------------------------------ |
+| **Health**   | GET            | `/health`                        | ❌   | Service health check           |
+| **Auth**     | POST           | `/auth/login`                    | ❌   | User login                     |
+| **Auth**     | GET            | `/auth/profile`                  | ✅   | Get user profile               |
+| **Auth**     | PUT            | `/auth/profile`                  | ✅   | Update profile                 |
+| **Auth**     | POST           | `/auth/change-password`          | ✅   | Change password                |
+| **Users**    | GET/POST       | `/users`                         | ✅   | List/Create users              |
+| **Users**    | GET/PUT/DELETE | `/users/:id`                     | ✅   | User CRUD                      |
+| **Users**    | PATCH          | `/users/:id/toggle-status`       | ✅   | Enable/Disable user            |
+| **Orgs**     | GET/POST       | `/organizations`                 | ✅   | List/Create orgs               |
+| **Orgs**     | GET            | `/organizations/my-organization` | ✅   | Get user's org                 |
+| **Chats**    | GET/POST       | `/chats`                         | ✅   | List/Create chats              |
+| **Chats**    | POST           | `/chats/:id/messages`            | ✅   | Send message & get AI response |
+| **Chats**    | PATCH          | `/chats/:id/archive`             | ✅   | Archive chat                   |
+| **Docs**     | GET/POST       | `/documents`                     | ✅   | List/Upload docs               |
+| **Docs**     | GET            | `/documents/:id/download`        | ✅   | Download file                  |
+| **Audit**    | GET            | `/audit-logs`                    | ✅   | List logs (admin)              |
+| **Audit**    | GET            | `/audit-logs/my-logs`            | ✅   | User's logs                    |
+| **Firewall** | GET/PUT        | `/firewall/config`               | ✅   | Manage rules                   |
+| **Firewall** | POST/DELETE    | `/firewall/blocked-ips/:ip`      | ✅   | Block/Unblock IP               |
+
+### **Pipeline Endpoints**
+
+**Base URL:** `http://localhost:8000`
+
+| Method | Endpoint        | Description                  |
+| ------ | --------------- | ---------------------------- |
+| GET    | `/`             | Health check                 |
+| POST   | `/ask`          | Ask question, get RAG answer |
+| POST   | `/load_project` | Reload knowledge base        |
+| GET    | `/stats`        | Service statistics           |
+| GET    | `/docs`         | OpenAPI documentation        |
+
+---
+
+## 🛠️ Development
+
+### **NPM Scripts (Root)**
 
 ```bash
-git clone https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG.git
-cd Technical-Support-RAG
+npm run setup        # Install all dependencies
+npm run dev          # Run all services with concurrently
 ```
 
-Install dependencies per service:
+### **Backend Scripts**
 
 ```bash
+cd backend
+npm run dev          # Start dev server with hot reload
+npm run build        # Compile TypeScript
+npm run start        # Run compiled code
+npm run lint         # Run ESLint
+npm run format       # Format code with Prettier
+npm run seed         # Seed admin user manually
+```
+
+### **Frontend Scripts**
+
+```bash
+cd kelo_ui
+npm run dev          # Start Vite dev server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
+
+### **Pipeline Commands**
+
+```bash
+cd pipeline
+source venv/bin/activate  # Linux/Mac
+# or: venv\Scripts\activate  # Windows
+
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 📚 Documentation
+
+- **[QUICK_START.md](QUICK_START.md)** - Beginner-friendly setup guide
+- **[DEV_SETUP.md](DEV_SETUP.md)** - Detailed development setup
+- **[FILE_STRUCTURE.md](FILE_STRUCTURE.md)** - Complete file documentation
+- **[SETUP_COMPLETE.md](SETUP_COMPLETE.md)** - Post-setup guide
+
+---
+
+## 🔧 Troubleshooting
+
+### **Backend Won't Start**
+
+```bash
+# Check MongoDB is running
+mongosh
+
+# Check .env file exists
+ls backend/.env  # Linux/Mac
+dir backend\.env  # Windows
+
+# Reinstall dependencies
+cd backend
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### **Frontend Won't Start**
+
+```bash
+# Check if port 7878 is free
+lsof -ti:7878 | xargs kill  # Linux/Mac
+netstat -ano | findstr :7878  # Windows
+
+# Reinstall dependencies
+cd kelo_ui
+rm -rf node_modules
+bun install  # or: npm install
+```
+
+### **Pipeline Won't Start**
+
+```bash
+# Reinstall Python packages
+cd pipeline
+rm -rf venv
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate  # Windows
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### **Port Already in Use**
+
+Change ports in configuration:
+
+- Frontend: Edit `kelo_ui/vite.config.ts` (port: 7878)
+- Backend: Edit `backend/.env` (PORT=5000)
+- Pipeline: Use `--port 8001` flag
+
+### **MongoDB Connection Error**
+
+```bash
+# Check MongoDB is running
+sudo systemctl status mongod  # Linux
+net start MongoDB  # Windows
+
+# Check connection string in backend/.env
+MONGODB_URI=mongodb://localhost:27017/tech-support-assistant
+```
+
+---
+
+## 🚢 Production Deployment
+
+### **Security Checklist**
+
+- [ ] Change default admin credentials
+- [ ] Set strong JWT_SECRET (32+ characters)
+- [ ] Update ALLOWED_ORIGINS for your domain
+- [ ] Enable HTTPS/TLS
+- [ ] Set NODE_ENV=production
+- [ ] Configure MongoDB authentication
+- [ ] Set up backup strategy
+- [ ] Enable MongoDB replication
+- [ ] Configure firewall rules
+- [ ] Set up monitoring and alerts
+- [ ] Review rate limiting settings
+- [ ] Implement log rotation
+
+### **Environment Variables (Production)**
+
+```env
 # Backend
-cd backend
-npm install
-
-# Frontend (Kelo UI)
-cd ../kelo_ui
-npm install
-
-# Pipeline
-cd ../pipeline
-python -m venv .venv
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-# macOS/Linux
-# source .venv/bin/activate
-pip install -r requirements.txt
+NODE_ENV=production
+HOST=0.0.0.0
+PORT=5000
+MONGODB_URI=mongodb://user:pass@host:27017/dbname?authSource=admin
+JWT_SECRET=<64-character-random-string>
+ALLOWED_ORIGINS=https://yourdomain.com
 ```
-
-## Environment Configuration
-
-### 1) Backend
-
-Copy and edit:
-
-```bash
-cd backend
-copy .env.example .env
-```
-
-Important values in `backend/.env`:
-
-- `PORT=5000`
-- `MONGODB_URI=mongodb://localhost:27017/tech-support-assistant`
-- `JWT_SECRET=...`
-- `ADMIN_EMAIL=admin123@gmail.com`
-- `ADMIN_PASSWORD=admin123`
-- `AI_ENGINE_URL=http://localhost:8000`
-- `ALLOWED_ORIGINS=http://localhost:5173,http://localhost:7878`
-
-### 2) Frontend (Kelo UI)
-
-Copy and edit:
-
-```bash
-cd kelo_ui
-copy .env.example .env
-```
-
-Required values in `kelo_ui/.env`:
-
-- `VITE_API_BASE_URL=http://localhost:5000/api`
-- `VITE_RAG_API_BASE_URL=http://127.0.0.1:8000`
-
-### 3) Pipeline
-
-No required env file by default. Current defaults in code:
-
-- API host/port: `127.0.0.1:8000`
-- Vector DB path: `pipeline/data/chroma`
-- Input CSV: `pipeline/data/Project.csv`
-
-## Run the Full Stack Locally
-
-Use 3 terminals.
-
-### Terminal 1: Pipeline
-
-```bash
-cd pipeline
-# Activate venv if needed
-.venv\Scripts\Activate.ps1
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-Health check: `http://127.0.0.1:8000/`
-
-### Terminal 2: Backend
-
-```bash
-cd backend
-npm run dev
-```
-
-Health check: `http://localhost:5000/api/health`
-
-### Terminal 3: Frontend (Kelo UI)
-
-```bash
-cd kelo_ui
-npm run dev
-```
-
-App URL: `http://localhost:7878`
-
-## Backend Guide
-
-Path: `backend/`
-
-### Purpose
-
-Provides:
-
-- Authentication and JWT-based authorization
-- Organization and user management
-- Chat storage and message handling
-- Document metadata and download APIs
-- Audit log tracking
-- Configurable firewall controls persisted in `firewall/config.json`
-
-### Runtime Behavior
-
-- Connects to MongoDB on startup
-- Seeds a super-admin user if not already present
-- Enforces CORS, security headers, and rate limiting
-- Calls RAG service `/ask` endpoint for assistant replies
-
-### Useful Commands
-
-```bash
-cd backend
-npm run dev      # development
-npm run build    # compile TypeScript to dist/
-npm run start    # run compiled build
-npm run lint
-npm run format
-npm run seed     # manual admin seed
-```
-
-### First Login
-
-Default admin credentials come from `backend/.env`:
-
-- Email: `ADMIN_EMAIL`
-- Password: `ADMIN_PASSWORD`
-
-Change these immediately after first login.
-
-### Notes
-
-- Document upload route expects multipart middleware; current route file includes a TODO comment to add multer middleware in route wiring.
-- Firewall bypass paths default to `/api/health` and `/api/auth/login`.
-
-## Frontend Guide
-
-Path: `kelo_ui/`
-
-### Purpose
-
-Provides:
-
-- Public home/login experience
-- Protected chat experience
-- Role-aware dashboard for CEO and SUPER_ADMIN users
-- Admin sections for users, organization, settings, and firewall
-
-### Stack
-
-- React 19 + TypeScript
-- Vite
-- TanStack Router
-- Tailwind CSS v4
-- Zustand for auth state
-
-### Useful Commands
-
-```bash
-cd kelo_ui
-npm run dev
-npm run build
-npm run preview
-npm run lint
-```
-
-### Routing Snapshot
-
-- `/` -> Home/Login
-- `/chat` -> Chat panel (requires authentication)
-- `/dashboard/*` -> Admin dashboard (requires CEO/SUPER_ADMIN role)
-
-## Pipeline Guide (RAG Service)
-
-Path: `pipeline/`
-
-### Purpose
-
-Hosts the retrieval + generation endpoint used by backend chat flow.
-
-### What It Does
-
-1. Loads `data/Project.csv` on startup (currently first 5 rows for lightweight local indexing)
-2. Embeds rows using `BAAI/bge-small-en-v1.5`
-3. Stores vectors in persistent ChromaDB at `data/chroma`
-4. Accepts POST `/ask` with `{ "question": "..." }`
-5. Generates an answer using `TinyLlama/TinyLlama-1.1B-Chat-v1.0`
-
-### Run Commands
-
-```bash
-cd pipeline
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-### API Endpoints
-
-- `GET /` -> service health
-- `POST /ask` -> RAG answer generation
-
-### Pipeline Data Refresh
-
-Replace or update `pipeline/data/Project.csv` then restart the service to reload and re-index at startup.
-
-## Kelo UI Guide
-
-Path: `kelo_ui/`
-
-This section focuses on project conventions for contributors working specifically on the UI codebase.
-
-### Key Folder Layout
-
-```text
-kelo_ui/src/
-├─ core/             # domain types and core abstractions
-├─ infrastructure/   # API clients and integration config
-├─ presentation/     # UI views/components/layouts/theme
-├─ routes/           # route definitions
-└─ hooks/            # shared hooks
-```
-
-### UI Development Workflow
-
-1. Add or update domain types in `src/core/domain/types.ts` if needed.
-2. Implement data calls in `src/infrastructure/api/*`.
-3. Build UI in `src/presentation/*`.
-4. Register route in `src/routes/*`.
-5. Verify role guards for protected routes.
-
-### API Configuration Source of Truth
-
-Use `src/infrastructure/config/api.config.ts` for base URLs and endpoint constants.
-
-## API Route Map
-
-Base URL: `http://localhost:5000/api`
-
-- `GET /health`
-- `POST /auth/login`
-- `GET /auth/profile`
-- `PUT /auth/profile`
-- `POST /auth/change-password`
-- `POST /auth/logout`
-- `GET/POST /organizations`
-- `GET /organizations/my-organization`
-- `GET/PUT/DELETE /organizations/:id`
-- `GET/POST /users`
-- `GET/PUT/DELETE /users/:id`
-- `PATCH /users/:id/toggle-status`
-- `GET/POST /chats`
-- `GET/PUT/DELETE /chats/:id`
-- `POST /chats/:id/messages`
-- `PATCH /chats/:id/archive`
-- `GET/POST /documents`
-- `GET/PUT/DELETE /documents/:id`
-- `GET /documents/:id/download`
-- `GET /audit-logs/my-logs`
-- `GET /audit-logs/stats`
-- `GET /audit-logs`
-- `GET /audit-logs/:id`
-- `GET /firewall/config`
-- `PUT /firewall/config`
-- `GET /firewall/stats`
-- `GET /firewall/users`
-- `POST /firewall/blocked-ips`
-- `DELETE /firewall/blocked-ips/:ip`
-- `POST /firewall/blocked-users`
-- `DELETE /firewall/blocked-users/:userId`
-
-## Troubleshooting
-
-### Backend cannot connect to MongoDB
-
-- Ensure MongoDB is running.
-- Verify `MONGODB_URI` in `backend/.env`.
-
-### Frontend cannot call backend
-
-- Verify backend is running on `http://localhost:5000`.
-- Check `VITE_API_BASE_URL` in `kelo_ui/.env`.
-- Ensure backend `ALLOWED_ORIGINS` includes frontend URL.
-
-### Chat replies fallback to error message
-
-- Ensure pipeline is running at `http://127.0.0.1:8000`.
-- Verify backend `AI_ENGINE_URL` or `RAG_API_BASE_URL` mapping.
-
-### Pipeline startup is slow
-
-- First run downloads embedding/generation models.
-- Keep internet access enabled on first startup.
-
-### Firewall blocking expected requests
-
-- Check and update `firewall/config.json` via firewall API endpoints.
-- Ensure bypass paths include health/login paths as needed.
-
-## Production Notes
-
-- Replace all default secrets and admin credentials.
-- Restrict CORS origins to trusted domains.
-- Use HTTPS and secure reverse proxy.
-- Add proper file upload middleware and storage handling for document routes.
-- Consider external vector DB/model serving for scale.
-- Add CI checks for lint/build/test in each service.
 
 ---
 
-If you want, I can also generate:
+## 🤝 Contributing
 
-- A Docker Compose file to run all three services together
-- Swagger/OpenAPI docs for backend routes
-- A deployment guide (VM, container, or Kubernetes)
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Authors
+
+**AMOHAMMEDIMRAN**
+
+- GitHub: [@AMOHAMMEDIMRAN](https://github.com/AMOHAMMEDIMRAN)
+- Repository: [Technical-Support-RAG](https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG)
+
+---
+
+## 🙏 Acknowledgments
+
+- **React Team** - React 19
+- **Vite Team** - Lightning-fast build tool
+- **FastAPI** - Modern Python web framework
+- **ChromaDB** - Vector database
+- **Hugging Face** - Pre-trained models
+- **MongoDB** - Database solution
+
+---
+
+## 📞 Support
+
+For issues, questions, or suggestions:
+
+- **Issues:** [GitHub Issues](https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG/issues)
+- **Documentation:** See docs/ folder
+- **Email:** Contact through GitHub profile
+
+---
+
+**Made with ❤️ for enterprise technical support teams**
