@@ -1,0 +1,16 @@
+{
+  "name": "technical-support-rag",
+  "version": "1.0.0",
+  "description": "Technical Support RAG - All Services",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"FRONTEND,BACKEND,PIPELINE\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run dev:frontend\" \"npm run dev:backend\" \"npm run dev:pipeline\"",
+    "dev:frontend": "cd kelo_ui && bun dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:pipeline": "cd pipeline && uvicorn main:app --reload",
+    "install:all": "cd kelo_ui && bun install && cd ../backend && npm install && cd ../pipeline && pip install -r requirements.txt"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
