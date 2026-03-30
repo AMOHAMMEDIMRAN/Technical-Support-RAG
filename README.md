@@ -8,6 +8,59 @@ Enterprise-ready Technical Support assistant platform with:
 
 This repository is organized as a multi-service workspace so each part can be developed independently and run together locally.
 
+## 🚀 Quick Start (New Users Start Here!)
+
+### One-Command Setup
+
+**Windows:**
+
+```cmd
+git clone https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG.git
+cd Technical-Support-RAG
+setup.bat
+```
+
+**Linux/Mac:**
+
+```bash
+git clone https://github.com/AMOHAMMEDIMRAN/Technical-Support-RAG.git
+cd Technical-Support-RAG
+chmod +x setup.sh
+./setup.sh
+```
+
+The setup script will automatically install all dependencies for frontend, backend, and pipeline!
+
+### Start All Services
+
+**Windows:**
+
+```cmd
+start.bat
+```
+
+**Linux/Mac:**
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+### Access the Application
+
+- **Frontend:** http://localhost:7878
+- **Backend API:** http://localhost:5000
+- **Pipeline (RAG):** http://localhost:8000
+
+**Default Login:**
+
+- Email: `admin123@gmail.com`
+- Password: `admin123`
+
+📖 **For detailed setup instructions, see [QUICK_START.md](QUICK_START.md)**
+
+---
+
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
