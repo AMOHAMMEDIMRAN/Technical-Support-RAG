@@ -391,10 +391,10 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ## 📚 Documentation
 
-- **[QUICK_START.md](QUICK_START.md)** - Beginner-friendly setup guide
-- **[DEV_SETUP.md](DEV_SETUP.md)** - Detailed development setup
-- **[FILE_STRUCTURE.md](FILE_STRUCTURE.md)** - Complete file documentation
-- **[SETUP_COMPLETE.md](SETUP_COMPLETE.md)** - Post-setup guide
+- **[QUICK_START.md](document/QUICK_START.mdQUICK_START.md)** - Beginner-friendly setup guide
+- **[DEV_SETUP.md](document/DEV_SETUP.mdDEV_SETUP.md)** - Detailed development setup
+- **[FILE_STRUCTURE.md](document/FILE_STRUCTURE.md)** - Complete file documentation
+- **[SETUP_COMPLETE.md](document/SETUP_COMPLETE.md)** - Post-setup guide
 
 ---
 
