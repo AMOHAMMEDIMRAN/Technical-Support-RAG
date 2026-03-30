@@ -5,6 +5,13 @@
 # Installs all dependencies for all services
 # ========================================
 
+# Ensure script runs from project root regardless of launch location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if ! cd "${SCRIPT_DIR}/.."; then
+    echo "ERROR: Failed to locate project root directory."
+    exit 1
+fi
+
 echo "========================================"
 echo "Technical Support RAG - Setup Script"
 echo "========================================"
@@ -164,7 +171,7 @@ echo "  1. Configure environment variables:"
 echo "     - Copy backend/.env.example to backend/.env"
 echo "     - Copy kelo_ui/.env.example to kelo_ui/.env"
 echo "  2. Make sure MongoDB is running"
-echo "  3. Run: ./start.sh"
+echo "  3. Run: ./start/start.sh"
 echo ""
 echo "========================================"
 echo ""

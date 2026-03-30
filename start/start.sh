@@ -4,6 +4,13 @@
 # Technical Support RAG - Startup Script
 # ========================================
 
+# Ensure script runs from project root regardless of launch location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if ! cd "${SCRIPT_DIR}/.."; then
+    echo "ERROR: Failed to locate project root directory."
+    exit 1
+fi
+
 echo "========================================"
 echo "Technical Support RAG - Startup Script"
 echo "========================================"
@@ -16,6 +23,14 @@ MAGENTA='\033[0;35m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
+
+cleanup() {
+    [ -n "${FRONTEND_PID:-}" ] && kill "$FRONTEND_PID" 2>/dev/null
+    [ -n "${BACKEND_PID:-}" ] && kill "$BACKEND_PID" 2>/dev/null
+    [ -n "${PIPELINE_PID:-}" ] && kill "$PIPELINE_PID" 2>/dev/null
+}
+
+trap cleanup EXIT INT TERM
 
 # Check if all directories exist
 if [ ! -d "kelo_ui" ]; then
@@ -97,6 +112,3 @@ echo "Press Ctrl+C to stop all services..."
 
 # Wait for any process to exit
 wait
-
-# Cleanup on exit
-trap "kill $FRONTEND_PID $BACKEND_PID $PIPELINE_PID 2>/dev/null" EXIT

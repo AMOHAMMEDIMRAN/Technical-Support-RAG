@@ -4,6 +4,15 @@ REM Technical Support RAG - Setup Script
 REM Installs all dependencies for all services
 REM ========================================
 
+REM Ensure script runs from project root regardless of launch location
+set "SCRIPT_DIR=%~dp0"
+pushd "%SCRIPT_DIR%.."
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: Failed to locate project root directory.
+    pause
+    exit /b 1
+)
+
 echo ========================================
 echo Technical Support RAG - Setup Script
 echo ========================================
@@ -179,8 +188,9 @@ echo   1. Configure environment variables:
 echo      - Copy backend\.env.example to backend\.env
 echo      - Copy kelo_ui\.env.example to kelo_ui\.env
 echo   2. Make sure MongoDB is running
-echo   3. Run: start.bat
+echo   3. Run: start\start.bat
 echo.
 echo ========================================
 echo.
+popd
 pause

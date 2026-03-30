@@ -3,6 +3,15 @@ REM ========================================
 REM Technical Support RAG - Startup Script
 REM ========================================
 
+REM Ensure script runs from project root regardless of launch location
+set "SCRIPT_DIR=%~dp0"
+pushd "%SCRIPT_DIR%.."
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: Failed to locate project root directory.
+    pause
+    exit /b 1
+)
+
 echo ========================================
 echo Technical Support RAG - Startup Script
 echo ========================================
@@ -32,7 +41,12 @@ if not exist "pipeline" (
 
 REM Start Frontend (Vite + React)
 echo [1/3] Starting Frontend on port 7878...
-start "FRONTEND" cmd /k "cd kelo_ui && bun dev"
+where bun >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    start "FRONTEND" cmd /k "cd kelo_ui && bun dev"
+) else (
+    start "FRONTEND" cmd /k "cd kelo_ui && npm run dev"
+)
 timeout /t 2 /nobreak >nul
 
 REM Start Backend (Node.js + Express)
@@ -66,4 +80,5 @@ echo Each service is running in a separate window.
 echo Close the service windows to stop them.
 echo ========================================
 echo.
+popd
 pause
