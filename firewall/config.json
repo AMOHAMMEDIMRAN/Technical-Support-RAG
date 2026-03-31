@@ -4,28 +4,18 @@
   "blockedIps": [],
   "allowedIps": [],
   "blockedUserAgents": [],
-  "blockedPaths": [],
+  "blockedPaths": [
+    "/api/firewall"
+  ],
   "bypassPaths": [
     "/api/health",
     "/api/auth/login"
   ],
-  "blockedUsers": [
-    {
-      "userId": "69b4f15f66a9dd2e228fae5b",
-      "email": "magesh@gmail.com",
-      "firstName": "magesh",
-      "lastName": "coder",
-      "blockedAt": "2026-03-26T06:56:24.249Z",
-      "blockedBy": {
-        "id": "69b3b50442c838ea28ef79eb",
-        "email": "admin123@gmail.com"
-      }
-    }
-  ],
+  "blockedUsers": [],
   "customBlockMessage": "Access denied by firewall policy",
-  "updatedAt": "2026-03-30T10:20:59.464Z",
+  "updatedAt": "2026-03-31T02:43:09.044Z",
   "updatedBy": {
-    "id": "69b3b50442c838ea28ef79eb",
-    "email": "admin123@gmail.com"
+    "id": "69cb3340de99f0eb1edbea46",
+    "email": "candyimmu0@gmail.com"
   }
 }
