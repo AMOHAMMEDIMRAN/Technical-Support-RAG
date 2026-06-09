@@ -23,6 +23,8 @@ const DEFAULT_FIREWALL_CONFIG: FirewallConfig = {
   updatedAt: new Date().toISOString(),
 };
 
+const RESERVED_BYPASS_PATHS = ["/api/firewall"];
+
 const normalizeIp = (ip: string): string => {
   if (!ip) return "";
   return ip.replace("::ffff:", "").trim();
@@ -246,9 +248,11 @@ export const evaluateFirewallRequest = (
   const userAgent = (input.userAgent || "").toLowerCase();
   const normalizedEmail = (input.userEmail || "").trim().toLowerCase();
 
-  const isBypassedPath = config.bypassPaths.some((bypassPath) =>
-    requestPath.startsWith(bypassPath),
-  );
+  const isBypassedPath =
+    config.bypassPaths.some((bypassPath) => requestPath.startsWith(bypassPath)) ||
+    RESERVED_BYPASS_PATHS.some((bypassPath) =>
+      requestPath.startsWith(bypassPath),
+    );
 
   if (isBypassedPath) {
     return { blocked: false };

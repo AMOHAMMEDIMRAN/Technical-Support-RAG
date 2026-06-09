@@ -136,7 +136,17 @@ const FirewallPage = () => {
     </div>
   );
   if (!config) return (
-    <div className="p-8 text-center text-muted-foreground">Firewall configuration is unavailable.</div>
+    <div className="p-8 text-center">
+      <p className="text-muted-foreground">Firewall configuration is unavailable.</p>
+      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+      <button
+        type="button"
+        onClick={loadConfig}
+        className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border/60 px-4 py-2 text-sm font-semibold hover:bg-muted/50 transition-colors"
+      >
+        <RefreshCw className="w-4 h-4" /> Retry
+      </button>
+    </div>
   );
 
   return (

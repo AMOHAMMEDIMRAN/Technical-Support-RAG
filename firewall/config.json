@@ -4,9 +4,7 @@
   "blockedIps": [],
   "allowedIps": [],
   "blockedUserAgents": [],
-  "blockedPaths": [
-    "/api/firewall"
-  ],
+  "blockedPaths": [],
   "bypassPaths": [
     "/api/health",
     "/api/auth/login"
